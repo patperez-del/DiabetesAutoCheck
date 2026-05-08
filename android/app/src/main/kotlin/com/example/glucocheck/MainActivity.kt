@@ -1,0 +1,6 @@
+package com.example.glucocheck
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
