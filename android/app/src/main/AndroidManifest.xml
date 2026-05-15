@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.glucocheck.diabetes">
     
    <application
         android:label="Diabetes AutoCheck"
