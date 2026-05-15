@@ -461,7 +461,7 @@ class _GlucosaPageState extends State<GlucosaPage> {
                               LineChartBarData(
                                 spots: puntosGrafico(),
                                 isCurved: true,
-                                color: [Colors.pink],
+                                color: Colors.pink,
                                 barWidth: 3,
                                 dotData: FlDotData(show: true),
                               ),
