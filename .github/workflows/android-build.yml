@@ -27,6 +27,12 @@ jobs:
 
       - name: Accept Android licenses
         run: yes | flutter doctor --android-licenses
+        
+      - name: Install Android SDK 35
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
 
       - name: Build App Bundle
         run: flutter build appbundle --release
