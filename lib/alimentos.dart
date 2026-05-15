@@ -54,10 +54,14 @@ List<Alimento> alimentos = [
   Alimento(nombre: "Durazno", categoria: "Frutas", calorias: 39, carbohidratos: 10, indiceGlicemico: "Bajo"),
   Alimento(nombre: "Mango", categoria: "Frutas", calorias: 60, carbohidratos: 15, indiceGlicemico: "Medio"),
   Alimento(nombre: "Maracuyá", categoria: "Frutas", calorias: 97, carbohidratos: 23, indiceGlicemico: "Medio"),
+  Alimento(nombre: "Tuna", categoria: "Frutas", calorias: 41, carbohidratos: 10, indiceGlicemico: "Bajo"),
+  Alimento(nombre: "Tunas", categoria: "Frutas", calorias: 41, carbohidratos: 10, indiceGlicemico: "Bajo"),
 
   // DULCES
   Alimento(nombre: "Manjar", categoria: "Dulces", calorias: 315, carbohidratos: 55, indiceGlicemico: "Alto"),
   Alimento(nombre: "Miel", categoria: "Dulces", calorias: 304, carbohidratos: 82, indiceGlicemico: "Alto"),
+  Alimento(nombre: "Queque", categoria: "Dulces", calorias: 360, carbohidratos: 55, indiceGlicemico: "Alto"),
+  Alimento(nombre: "Queque casero", categoria: "Dulces", calorias: 330, carbohidratos: 50, indiceGlicemico: "Alto"),
   Alimento(nombre: "Mermelada", categoria: "Dulces", calorias: 250, carbohidratos: 65, indiceGlicemico: "Alto"),
 
   // BEBIDAS

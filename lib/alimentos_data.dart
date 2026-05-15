@@ -6,6 +6,8 @@ final List<Map<String, dynamic>> alimentosBase = [
   {"nombre": "Frutillas", "categoria": "Fruta", "cal": 32, "carb": 8, "ig": 25},
   {"nombre": "Uva", "categoria": "Fruta", "cal": 69, "carb": 18, "ig": 53},
   {"nombre": "Sandía", "categoria": "Fruta", "cal": 30, "carb": 8, "ig": 72},
+  {"nombre": "Tuna", "categoria": "Fruta", "cal": 41, "carb": 10, "ig": 35},
+  {"nombre": "Tunas", "categoria": "Fruta", "cal": 41, "carb": 10, "ig": 35},
 
   // Verduras y tubérculos
   {"nombre": "Lechuga", "categoria": "Verdura", "cal": 15, "carb": 2, "ig": 10},
@@ -75,6 +77,8 @@ final List<Map<String, dynamic>> alimentosBase = [
   {"nombre": "Galletas dulces", "categoria": "Dulce", "cal": 480, "carb": 70, "ig": 70},
   {"nombre": "Torta", "categoria": "Dulce", "cal": 350, "carb": 45, "ig": 65},
   {"nombre": "Helado", "categoria": "Dulce", "cal": 207, "carb": 24, "ig": 61},
+  {"nombre": "Queque", "categoria": "Dulce", "cal": 360, "carb": 55, "ig": 75},
+  {"nombre": "Queque casero", "categoria": "Dulce", "cal": 330, "carb": 50, "ig": 70},
 
   // Comida chilena
   {"nombre": "Empanada de pino", "categoria": "Comida chilena", "cal": 450, "carb": 45, "ig": 65},

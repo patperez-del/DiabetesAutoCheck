@@ -29,7 +29,9 @@ void main() async {
   await Hive.openBox('ejercicioBox');
   await Hive.openBox('menusBox');
   await Hive.openBox('medicamentosBox');
+  await Hive.openBox('medicamentosFrecuentesBox');
   await Hive.openBox('alimentosUsuarioBox');
+  await Hive.openBox('contactoEmergenciaBox');
 
 
   runApp(const GlucoCheckApp());
@@ -42,7 +44,33 @@ class GlucoCheckApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Mi Autochequeo Diabetes',
+      title: 'Diabetes AutoCheck',
+      theme: ThemeData(
+        primarySwatch: Colors.indigo,
+        scaffoldBackgroundColor: const Color(0xFFF5F6FA),
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          elevation: 0,
+          backgroundColor: Colors.indigo,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            padding: const EdgeInsets.symmetric(
+              vertical: 14,
+              horizontal: 16,
+            ),
+          ),
+        ),
+        cardTheme: CardTheme(
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+        ),
+      ),
       home: const InicioPage(),
     );
   }

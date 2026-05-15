@@ -11,6 +11,7 @@ class MedicamentosPage extends StatefulWidget {
 
 class _MedicamentosPageState extends State<MedicamentosPage> {
   late Box medicamentosBox;
+  late Box medicamentosFrecuentesBox;
 
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController dosisController = TextEditingController();
@@ -21,6 +22,7 @@ class _MedicamentosPageState extends State<MedicamentosPage> {
   void initState() {
     super.initState();
     medicamentosBox = Hive.box('medicamentosBox');
+    medicamentosFrecuentesBox = Hive.box('medicamentosFrecuentesBox');
   }
 
   String fechaHoy() => DateFormat('yyyy-MM-dd').format(DateTime.now());
@@ -28,6 +30,12 @@ class _MedicamentosPageState extends State<MedicamentosPage> {
 
   List<Map<String, dynamic>> medicamentos() {
     return medicamentosBox.values
+        .map((item) => Map<String, dynamic>.from(item))
+        .toList();
+  }
+
+  List<Map<String, dynamic>> medicamentosFrecuentes() {
+    return medicamentosFrecuentesBox.values
         .map((item) => Map<String, dynamic>.from(item))
         .toList();
   }
@@ -55,6 +63,20 @@ class _MedicamentosPageState extends State<MedicamentosPage> {
     };
 
     await medicamentosBox.add(registro);
+
+    final existe = medicamentosFrecuentes().any(
+          (m) =>
+      m["nombre"] == nombreController.text &&
+          m["dosis"] == dosisController.text,
+    );
+
+    if (!existe) {
+      await medicamentosFrecuentesBox.add({
+        "nombre": nombreController.text,
+        "dosis": dosisController.text,
+        "horario": horarioController.text,
+      });
+    }
 
     nombreController.clear();
     dosisController.clear();
@@ -104,6 +126,51 @@ class _MedicamentosPageState extends State<MedicamentosPage> {
     }
   }
 
+  Future<void> eliminarFrecuente(Map<String, dynamic> med) async {
+    dynamic keyEncontrada;
+
+    for (final key in medicamentosFrecuentesBox.keys) {
+      final item = medicamentosFrecuentesBox.get(key);
+      if (item["nombre"] == med["nombre"] && item["dosis"] == med["dosis"]) {
+        keyEncontrada = key;
+        break;
+      }
+    }
+
+    if (keyEncontrada != null) {
+      await medicamentosFrecuentesBox.delete(keyEncontrada);
+      setState(() {});
+    }
+  }
+  bool medicamentoAtrasado(Map<String, dynamic> med) {
+    if (med["tomado"] == true) return false;
+
+    try {
+      final horario = med["horario"].toString().split("-").first.trim();
+
+      final partes = horario.split(":");
+
+      if (partes.length != 2) return false;
+
+      final hora = int.parse(partes[0]);
+      final minuto = int.parse(partes[1]);
+
+      final ahora = DateTime.now();
+
+      final horaMed = DateTime(
+        ahora.year,
+        ahora.month,
+        ahora.day,
+        hora,
+        minuto,
+      );
+
+      return ahora.isAfter(horaMed);
+    } catch (e) {
+      return false;
+    }
+  }
+
   int totalPendientes() {
     return medicamentos().where((m) => m["tomado"] != true).length;
   }
@@ -124,13 +191,59 @@ class _MedicamentosPageState extends State<MedicamentosPage> {
               "Resumen de medicamentos",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Text("Registrados: ${medicamentos().length}"),
+            Text("Registrados hoy: ${medicamentos().length}"),
             Text("Tomados: ${totalTomados()}"),
             Text("Pendientes: ${totalPendientes()}"),
             const SizedBox(height: 8),
             const Text(
               "Toca un medicamento para marcarlo como tomado o pendiente.",
               style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget medicamentosFrecuentesWidget() {
+    final lista = medicamentosFrecuentes();
+
+    if (lista.isEmpty) {
+      return const SizedBox();
+    }
+
+    return Card(
+      color: Colors.purple.shade50,
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Medicamentos habituales",
+              style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              "Toca uno para rellenar nombre, dosis y horario automáticamente.",
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: lista.map((med) {
+                return InputChip(
+                  label: Text("${med["nombre"]} (${med["dosis"]})"),
+                  onPressed: () {
+                    nombreController.text = med["nombre"] ?? "";
+                    dosisController.text = med["dosis"] ?? "";
+                    horarioController.text = med["horario"] ?? "";
+                    setState(() {});
+                  },
+                  onDeleted: () => eliminarFrecuente(med),
+                  deleteIcon: const Icon(Icons.close),
+                );
+              }).toList(),
             ),
           ],
         ),
@@ -189,7 +302,7 @@ class _MedicamentosPageState extends State<MedicamentosPage> {
               child: ElevatedButton.icon(
                 onPressed: agregarMedicamento,
                 icon: const Icon(Icons.add),
-                label: const Text('Agregar medicamento'),
+                label: const Text('Registrar medicamento'),
               ),
             ),
           ],
@@ -206,7 +319,7 @@ class _MedicamentosPageState extends State<MedicamentosPage> {
         child: Padding(
           padding: EdgeInsets.all(18),
           child: Text(
-            'Aún no hay medicamentos registrados.',
+            'Aún no hay medicamentos registrados hoy.',
             style: TextStyle(fontSize: 16),
           ),
         ),
@@ -216,22 +329,27 @@ class _MedicamentosPageState extends State<MedicamentosPage> {
     return Column(
       children: lista.map((med) {
         final tomado = med["tomado"] == true;
+        final atrasado = medicamentoAtrasado(med);
 
         return Card(
           child: ListTile(
             leading: Icon(
               tomado ? Icons.check_circle : Icons.medication,
-              color: tomado ? Colors.green : Colors.pink,
+              color: tomado
+                  ? Colors.green
+                  : atrasado
+                  ? Colors.red
+                  : Colors.pink,
               size: 34,
             ),
             title: Text(
-              med["nombre"],
+              med["nombre"] ?? "",
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
               'Dosis: ${med["dosis"]}\n'
                   'Horario: ${med["horario"]}\n'
-                  'Estado: ${tomado ? "Tomado ${med["horaTomado"]}" : "Pendiente"}\n'
+                  'Estado: ${tomado ? "Tomado ${med["horaTomado"]}" : atrasado ? "ATRASADO" : "Pendiente"}\n'
                   '${med["nota"] == "" ? "" : "Nota: ${med["nota"]}"}',
             ),
             isThreeLine: true,
@@ -259,6 +377,7 @@ class _MedicamentosPageState extends State<MedicamentosPage> {
         child: Column(
           children: [
             resumen(),
+            medicamentosFrecuentesWidget(),
             formulario(),
             const SizedBox(height: 14),
             listaMedicamentos(),
