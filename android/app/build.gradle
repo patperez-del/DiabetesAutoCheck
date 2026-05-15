@@ -60,7 +60,12 @@ android {
   
 
     buildTypes {
-        release 
+        release{
+            minifyEnabled false
+            shrinkResources false
+        
+        
+        
     }
 }
 
